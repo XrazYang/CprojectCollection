@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy.cmdline
 from CprojectCollection.items import CprojectcollectionItem
+from scrapy.http import Request
+import time
 import os
 
 
@@ -8,15 +10,9 @@ import os
 class Ccollection(scrapy.Spider):
     name = "CprojectCollection"
     allowed_domains = ["github.com"]
+    start_urls = ["https://github.com/search?l=C&o=desc&p=1&q=C&s=stars&type=Repositories"]
 
-    def __init__(self):
-        self.start_urls = []
-        for i in range(1, 101):
-            # https://github.com/search?l=C&o=desc&p=2&q=C&s=stars&type=Repositories
-            url = "https://github.com/search?l=C&o=desc&p=" + str(i) + "&q=C&s=stars&type=Repositories"
-            self.start_urls.append(url)
-
-    def parse(self, response):
+    def parse(self,response):
         item = CprojectcollectionItem()
 
         project_list = response.xpath('//a[@class="v-align-middle"]/@href')
@@ -29,10 +25,17 @@ class Ccollection(scrapy.Spider):
             item["project_name"] = project_name
             item["project_url"] = "git@github.com:" + project[1:] + ".git"
             yield item
-        # time.sleep(5)
+
+            #'//a[@class="next_page"]/@href'
+        next_page_args = response.xpath('//a[@class="next_page"]/@href').extract()
+        if next_page_args:
+            next_page = "https://github.com"+next_page_args[0]
+            print(next_page)
+            time.sleep(6)
+            yield Request(next_page, callback=self.parse)
 
 
 if __name__ == '__main__':
-    if os.path.exists("project_list.csv"):
-        os.remove('project_list.csv')
-    scrapy.cmdline.execute(['scrapy', 'crawl', 'CprojectCollection', '-o', 'project_list.csv'])
+    if os.path.exists("project_list_C.csv"):
+        os.remove('project_list_C.csv')
+    scrapy.cmdline.execute(['scrapy', 'crawl', 'CprojectCollection', '-o', 'project_list_C.csv'])
