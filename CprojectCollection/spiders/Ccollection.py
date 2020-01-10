@@ -31,7 +31,7 @@ class Ccollection(scrapy.Spider):
         if next_page_args:
             next_page = "https://github.com"+next_page_args[0]
             print(next_page)
-            time.sleep(6)
+            time.sleep(10)
             yield Request(next_page, callback=self.parse)
 
 
