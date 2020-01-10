@@ -2,7 +2,6 @@ import csv
 import git
 import os
 
-
 def clone_project_from_github():
     with open("src/project_list_C.csv", "r", encoding="utf-8") as project_list:
         reader = csv.reader(project_list)
