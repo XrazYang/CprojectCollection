@@ -1,12 +1,11 @@
 import csv
 import git
 import os
-import shutil
 import stat
 
 
 def clone_project_from_github():
-    with open("src/project_list_C.csv", "r", encoding="utf-8") as project_list:
+    with open("src/project_list_C++.csv", "r", encoding="utf-8") as project_list:
         reader = csv.reader(project_list)
         for item in reader:
             if reader.line_num == 1:
@@ -33,13 +32,19 @@ def clone_project_from_github():
                     repo.close()
                 else:  # 当前用户下有该项目
                     git_list = os.listdir(root_dir + user_name + "/" + project_name)
-                    if len(git_list) == 1 and git_list[0] == ".git":  # 当前项目只clone 一部分
+                    if len(git_list) == 1 and git_list[0] == ".git":  # 当前项目只clone 一部分 .git
                         for root, dirs, files in os.walk(root_dir + user_name + "/" + project_name, topdown=False):
                             for name in files:
                                 os.chmod(os.path.join(root, name), stat.S_IWRITE)
                                 os.remove(os.path.join(root, name))
                             for name in dirs:
                                 os.rmdir(os.path.join(root, name))
+                        print("cloning project ------------->>>>> " + user_name + "/" + project_name)
+                        repo = git.Repo.clone_from(project_url, root_dir + user_name + "/" + project_name)
+                        repo.close()
+
+                    elif len(git_list) == 0:  # 当前项目clone为空
+                        os.rmdir(root_dir + user_name + "/" + project_name)
                         print("cloning project ------------->>>>> " + user_name + "/" + project_name)
                         repo = git.Repo.clone_from(project_url, root_dir + user_name + "/" + project_name)
                         repo.close()

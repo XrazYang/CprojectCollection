@@ -5,13 +5,14 @@ from scrapy.http import Request
 import time
 import os
 
+
 class Ccollection(scrapy.Spider):
     name = "CprojectCollection"
     allowed_domains = ["github.com"]
     # C
     # start_urls = ["https://github.com/search?l=C&o=desc&p=1&q=C&s=stars&type=Repositories"]
     # C++
-    start_urls = ["https://github.com/search?l=C&o=desc&p=1&q=C&s=stars&type=Repositories"]
+    start_urls = ["https://github.com/search?l=C%2B%2B&o=desc&p=1&q=C%2B%2B&s=stars&type=Repositories"]
 
     def parse(self, response):
         item = CprojectcollectionItem()
